@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sentiment-Enhanced Product Recommendations</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .card-custom {
+            backdrop-filter: blur(10px);
+            background-color: rgba(255, 255, 255, 0.95);
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        .btn-custom {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border: none;
+            border-radius: 25px;
+            padding: 12px 30px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+        .btn-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        .sample-users {
+            background-color: rgba(102, 126, 234, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        .user-tag {
+            display: inline-block;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            margin: 3px;
+            font-size: 0.85em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .user-tag:hover {
+            transform: scale(1.05);
+            color: white;
+            text-decoration: none;
+        }
+        .icon-feature {
+            color: #667eea;
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+        .alert-custom {
+            border-radius: 15px;
+            border: none;
+        }
+    </style>
+</head>
+<body class="gradient-bg">
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card card-custom">
+                    <div class="card-body p-5">
+                        <div class="text-center mb-5">
+                            <i class="fas fa-chart-line icon-feature"></i>
+                            <h1 class="display-4 fw-bold text-dark">Sentiment-Enhanced Recommendations</h1>
+                            <p class="lead text-muted">Discover your next favorite products with AI-powered sentiment analysis</p>
+                        </div>
+
+                        <!-- Flash Messages -->
+                        {% with messages = get_flashed_messages() %}
+                            {% if messages %}
+                                {% for message in messages %}
+                                    <div class="alert alert-warning alert-custom alert-dismissible fade show" role="alert">
+                                        <i class="fas fa-exclamation-triangle me-2"></i>
+                                        {{ message }}
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        {% endwith %}
+
+                        <!-- Main Form -->
+                        <form method="POST" action="{{ url_for('get_recommendations') }}" class="mb-4">
+                            <div class="row g-3 align-items-end">
+                                <div class="col-md-8">
+                                    <label for="username" class="form-label fw-bold">
+                                        <i class="fas fa-user me-2"></i>Enter Username
+                                    </label>
+                                    <input type="text" 
+                                           class="form-control form-control-lg" 
+                                           id="username" 
+                                           name="username" 
+                                           placeholder="Type username here..." 
+                                           required
+                                           autocomplete="off">
+                                </div>
+                                <div class="col-md-4">
+                                    <button type="submit" class="btn btn-custom btn-lg w-100">
+                                        <i class="fas fa-search me-2"></i>Get Top 5 Recommendations
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+
+                        <!-- Features Section -->
+                        <div class="row text-center mb-4">
+                            <div class="col-md-4">
+                                <i class="fas fa-brain text-primary mb-3" style="font-size: 2rem;"></i>
+                                <h5>AI-Powered</h5>
+                                <p class="text-muted small">Advanced machine learning algorithms analyze user behavior and sentiment</p>
+                            </div>
+                            <div class="col-md-4">
+                                <i class="fas fa-heart text-primary mb-3" style="font-size: 2rem;"></i>
+                                <h5>Sentiment Analysis</h5>
+                                <p class="text-muted small">Products ranked by positive customer sentiment and ratings</p>
+                            </div>
+                            <div class="col-md-4">
+                                <i class="fas fa-lightning-bolt text-primary mb-3" style="font-size: 2rem;"></i>
+                                <h5>Real-time</h5>
+                                <p class="text-muted small">Instant recommendations based on the latest review data</p>
+                            </div>
+                        </div>
+
+                        <!-- Sample Users Section -->
+                        {% if sample_users %}
+                        <div class="sample-users">
+                            <h5 class="fw-bold mb-3">
+                                <i class="fas fa-users me-2"></i>Try these sample usernames:
+                            </h5>
+                            <div class="d-flex flex-wrap">
+                                {% for user in sample_users %}
+                                    <a href="#" class="user-tag" onclick="fillUsername('{{ user }}')">{{ user }}</a>
+                                {% endfor %}
+                            </div>
+                            <p class="text-muted small mt-3 mb-0">
+                                <i class="fas fa-info-circle me-1"></i>
+                                Click any username above to try it, or type your own username.
+                            </p>
+                        </div>
+                        {% endif %}
+
+                        <!-- API Info -->
+                        <div class="mt-4 pt-4 border-top">
+                            <h6 class="fw-bold">
+                                <i class="fas fa-code me-2"></i>API Access
+                            </h6>
+                            <p class="text-muted small mb-2">
+                                Get recommendations programmatically:
+                            </p>
+                            <code class="bg-light p-2 rounded d-block">
+                                GET /api/recommend/&lt;username&gt;
+                            </code>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function fillUsername(username) {
+            document.getElementById('username').value = username;
+            document.getElementById('username').focus();
+        }
+
+        // Auto-focus on the username input
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('username').focus();
+        });
+
+        // Handle Enter key in username input
+        document.getElementById('username').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                this.form.submit();
+            }
+        });
+    </script>
+</body>
+</html>
