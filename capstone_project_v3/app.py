@@ -16,6 +16,9 @@ logger = logging.getLogger(__name__)
 app = Flask(__name__)
 app.secret_key = 'your-secret-key-change-this-in-production'
 
+from pathlib import Path
+BASE = Path(__file__).resolve().parent
+
 class ProductRecommendationSystem:
     """Simplified version of the recommendation system for Flask deployment"""
     
@@ -364,4 +367,5 @@ if __name__ == '__main__':
         logger.info("Starting Flask application...")
         app.run(debug=False, host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
     else:
+
         logger.error("Failed to initialize recommendation systems. Exiting.")
