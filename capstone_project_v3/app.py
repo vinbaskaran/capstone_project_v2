@@ -8,6 +8,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.neighbors import NearestNeighbors
 import os
 import logging
+import traceback
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -31,37 +32,54 @@ class ProductRecommendationSystem:
         self.knn_model = None
         self.tfidf_vectorizer = None
         self.product_features_tfidf = None
-        
+
+
+
     def load_models_and_data(self):
-        """Load all necessary models and data"""
+        """Load all necessary models and data with clear errors on Heroku."""
         try:
-            # Load the core data
-            self.reviews_df = pd.read_csv(BASE / 'model_data' / 'reviews_data.csv')
-            
+            # Helper to assert files exist
+            def must_exist(path: Path):
+                if not path.exists():
+                    raise FileNotFoundError(f"Required file not found: {path}")
+                return path
+
+            # Build all paths relative to this file
+            data_dir = BASE / "model_data"
+
+            reviews_csv              = must_exist(data_dir / "reviews_data.csv")
+            user_mapping_pkl         = must_exist(data_dir / "user_mapping.pkl")
+            item_mapping_pkl         = must_exist(data_dir / "item_mapping.pkl")
+            user_item_matrix_pkl     = must_exist(data_dir / "user_item_matrix.pkl")
+            item_features_pkl        = must_exist(data_dir / "item_features.pkl")
+            knn_model_pkl            = must_exist(data_dir / "knn_model.pkl")
+            tfidf_vectorizer_pkl     = must_exist(data_dir / "tfidf_vectorizer.pkl")
+            product_features_tfidf_p = must_exist(data_dir / "product_features_tfidf.pkl")
+
+            # Load core data
+            self.reviews_df = pd.read_csv(reviews_csv)
+
             # Load mappings
-            with open(BASE / 'model_data' / 'user_mapping.pkl', 'rb') as f:
+            with open(user_mapping_pkl, "rb") as f:
                 self.user_mapping = pickle.load(f)
-            
-            with open(BASE / 'model_data' / 'item_mapping.pkl', 'rb') as f:
+            with open(item_mapping_pkl, "rb") as f:
                 self.item_mapping = pickle.load(f)
-            
-            # Load matrices
-            self.user_item_matrix = joblib.load(BASE / 'model_data' / 'user_item_matrix.pkl')
-            self.item_features = joblib.load(BASE / 'model_data' / 'item_features.pkl')
-            
-            # Load KNN model
-            self.knn_model = joblib.load(BASE / 'model_data' / 'knn_model.pkl')
-            
-            # Load TF-IDF components
-            self.tfidf_vectorizer = joblib.load(BASE / 'model_data' / 'tfidf_vectorizer.pkl')
-            self.product_features_tfidf = joblib.load(BASE / 'model_data' / 'product_features_tfidf.pkl')
-            
-            logger.info("All models and data loaded successfully")
+
+            # Load matrices / models
+            self.user_item_matrix        = joblib.load(user_item_matrix_pkl)
+            self.item_features           = joblib.load(item_features_pkl)
+            self.knn_model               = joblib.load(knn_model_pkl)
+            self.tfidf_vectorizer        = joblib.load(tfidf_vectorizer_pkl)
+            self.product_features_tfidf  = joblib.load(product_features_tfidf_p)
+
+            logger.info("✅ All models and data loaded successfully.")
             return True
-            
+
         except Exception as e:
-            logger.error(f"Error loading models: {str(e)}")
+            # Log full traceback so you can see the exact reason in Heroku logs
+            logger.error("❌ Error loading models/data: %s\n%s", str(e), traceback.format_exc())
             return False
+
     
     def get_user_recommendations(self, username, n_recommendations=20):
         """Get recommendations for a user using item-based collaborative filtering"""
@@ -372,5 +390,6 @@ if __name__ == '__main__':
     else:
 
         logger.error("Failed to initialize recommendation systems. Exiting.")
+
 
 
