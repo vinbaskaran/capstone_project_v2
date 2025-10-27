@@ -324,13 +324,12 @@ def get_recommendations():
         # Fail fast if systems aren't ready
         if rec_system is None or sentiment_rec_system is None:
             app.logger.error("recommend: systems not initialized")
-            if request.headers.get("Accept", "").startswith("application/json"):
-                return jsonify({
-                    "ready": False,
-                    "error": "Recommendation system not initialized on server"
-                }), 503
-            flash('Recommendation system not initialized')
-            return redirect(url_for('index'))
+            # TEMP: always return 503 so we don't hide the error behind a 302 redirect
+            return jsonify({
+                "ready": False,
+                "error": "Recommendation system not initialized on server"
+            }), 503
+
 
         # Validate user
         if username not in rec_system.user_mapping:
@@ -426,6 +425,7 @@ if __name__ == '__main__':
     else:
 
         logger.error("Failed to initialize recommendation systems. Exiting.")
+
 
 
 
