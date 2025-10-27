@@ -286,10 +286,14 @@ def initialize_systems():
 
 # --- Heroku/Gunicorn: initialize on import ---
 try:
-    initialize_systems()
-    logger.info("startup: initialize_systems() called at import time")
-except Exception as _e:
-    logger.exception("startup: initialize_systems() raised an exception")
+    initialized = initialize_systems()
+    if not initialized:
+        app.logger.error("initialize_systems() returned False during import")
+    else:
+        app.logger.info("initialize_systems() succeeded during import")
+except Exception:
+    app.logger.exception("initialize_systems() raised during import")
+
 
 
 @app.route('/')
@@ -308,39 +312,59 @@ def index():
 def get_recommendations():
     """Get sentiment-enhanced recommendations for a user"""
     try:
-        username = request.form.get('username', '').strip().lower()
-        
+        username = (request.form.get('username') or '').strip().lower()
         if not username:
+            app.logger.warning("recommend: empty username")
+            # If the request is expecting JSON (e.g., via fetch/axios), return JSON
+            if request.headers.get("Accept", "").startswith("application/json"):
+                return jsonify({"ready": True, "error": "username required"}), 400
             flash('Please enter a username')
             return redirect(url_for('index'))
-        
-        if not rec_system or not sentiment_rec_system:
+
+        # Fail fast if systems aren't ready
+        if rec_system is None or sentiment_rec_system is None:
+            app.logger.error("recommend: systems not initialized")
+            if request.headers.get("Accept", "").startswith("application/json"):
+                return jsonify({
+                    "ready": False,
+                    "error": "Recommendation system not initialized on server"
+                }), 503
             flash('Recommendation system not initialized')
             return redirect(url_for('index'))
-        
-        # Check if user exists
+
+        # Validate user
         if username not in rec_system.user_mapping:
+            app.logger.warning("recommend: unknown username '%s'", username)
+            if request.headers.get("Accept", "").startswith("application/json"):
+                return jsonify({"ready": True, "error": f"Username '{username}' not found"}), 404
             flash(f"Username '{username}' not found in our system")
             return redirect(url_for('index'))
-        
-        # Get sentiment-enhanced recommendations
+
+        # Existing recommendation logic
         results, error = sentiment_rec_system.get_sentiment_enhanced_recommendations(
             username, n_recommendations=20, top_n=5
         )
-        
         if error:
+            app.logger.error("recommend: pipeline error: %s", error)
+            if request.headers.get("Accept", "").startswith("application/json"):
+                return jsonify({"ready": True, "error": str(error)}), 500
             flash(f"Error: {error}")
             return redirect(url_for('index'))
-        
-        return render_template('results.html', 
-                             username=username,
-                             recommendations=results['top_sentiment_recommendations'],
-                             summary=results['analysis_summary'])
-        
+
+        return render_template(
+            'results.html',
+            username=username,
+            recommendations=results['top_sentiment_recommendations'],
+            summary=results['analysis_summary']
+        )
+
     except Exception as e:
-        logger.error(f"Error in get_recommendations: {str(e)}")
+        app.logger.exception("recommend: unhandled exception")
+        if request.headers.get("Accept", "").startswith("application/json"):
+            return jsonify({"ready": True, "error": str(e)}), 500
         flash(f"An error occurred: {str(e)}")
         return redirect(url_for('index'))
+
 
 @app.route('/api/recommend/<username>')
 def api_recommendations(username):
@@ -391,6 +415,7 @@ def health_check():
 def api_ready():
     ok = (rec_system is not None) and (sentiment_rec_system is not None)
     return jsonify({"ready": ok}), (200 if ok else 500)
+    
 
 
 if __name__ == '__main__':
@@ -401,6 +426,7 @@ if __name__ == '__main__':
     else:
 
         logger.error("Failed to initialize recommendation systems. Exiting.")
+
 
 
 
