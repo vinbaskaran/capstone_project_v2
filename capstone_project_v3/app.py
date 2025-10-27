@@ -36,25 +36,25 @@ class ProductRecommendationSystem:
         """Load all necessary models and data"""
         try:
             # Load the core data
-            self.reviews_df = pd.read_csv('model_data/reviews_data.csv')
+            self.reviews_df = pd.read_csv(BASE / 'model_data' / 'reviews_data.csv')
             
             # Load mappings
-            with open('model_data/user_mapping.pkl', 'rb') as f:
+            with open(BASE / 'model_data' / 'user_mapping.pkl', 'rb') as f:
                 self.user_mapping = pickle.load(f)
             
-            with open('model_data/item_mapping.pkl', 'rb') as f:
+            with open(BASE / 'model_data' / 'item_mapping.pkl', 'rb') as f:
                 self.item_mapping = pickle.load(f)
             
             # Load matrices
-            self.user_item_matrix = joblib.load('model_data/user_item_matrix.pkl')
-            self.item_features = joblib.load('model_data/item_features.pkl')
+            self.user_item_matrix = joblib.load(BASE / 'model_data' / 'user_item_matrix.pkl')
+            self.item_features = joblib.load(BASE / 'model_data' / 'item_features.pkl')
             
             # Load KNN model
-            self.knn_model = joblib.load('model_data/knn_model.pkl')
+            self.knn_model = joblib.load(BASE / 'model_data' / 'knn_model.pkl')
             
             # Load TF-IDF components
-            self.tfidf_vectorizer = joblib.load('model_data/tfidf_vectorizer.pkl')
-            self.product_features_tfidf = joblib.load('model_data/product_features_tfidf.pkl')
+            self.tfidf_vectorizer = joblib.load(BASE / 'model_data' / 'tfidf_vectorizer.pkl')
+            self.product_features_tfidf = joblib.load(BASE / 'model_data' / 'product_features_tfidf.pkl')
             
             logger.info("All models and data loaded successfully")
             return True
@@ -369,3 +369,4 @@ if __name__ == '__main__':
     else:
 
         logger.error("Failed to initialize recommendation systems. Exiting.")
+
