@@ -266,6 +266,9 @@ def initialize_systems():
         logger.error(f"Error initializing systems: {str(e)}")
         return False
 
+# --- Heroku/Gunicorn: initialize on import ---
+initialize_systems()
+
 @app.route('/')
 def index():
     """Home page"""
@@ -369,4 +372,5 @@ if __name__ == '__main__':
     else:
 
         logger.error("Failed to initialize recommendation systems. Exiting.")
+
 
