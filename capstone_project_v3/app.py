@@ -47,6 +47,15 @@ class ProductRecommendationSystem:
             # Build all paths relative to this file
             data_dir = BASE / "model_data"
 
+            # Log where we are and what we have
+            logger.info("BASE=%s", BASE)
+            logger.info("Looking for files in %s", data_dir)
+            try:
+                logger.info("model_data contents: %s", [p.name for p in sorted(data_dir.glob("*"))])
+            except Exception:
+                logger.exception("Could not list model_data directory")
+
+
             reviews_csv              = must_exist(data_dir / "reviews_data.csv")
             user_mapping_pkl         = must_exist(data_dir / "user_mapping.pkl")
             item_mapping_pkl         = must_exist(data_dir / "item_mapping.pkl")
@@ -64,6 +73,9 @@ class ProductRecommendationSystem:
                 self.user_mapping = pickle.load(f)
             with open(item_mapping_pkl, "rb") as f:
                 self.item_mapping = pickle.load(f)
+
+            # ✅ Normalize username keys once so route `.lower()` matches
+            self.user_mapping = {str(k).strip().lower(): v for k, v in self.user_mapping.items()}
 
             # Load matrices / models
             self.user_item_matrix        = joblib.load(user_item_matrix_pkl)
@@ -425,6 +437,7 @@ if __name__ == '__main__':
     else:
 
         logger.error("Failed to initialize recommendation systems. Exiting.")
+
 
 
 
