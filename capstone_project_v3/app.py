@@ -418,12 +418,19 @@ def api_ready():
     
 @app.route("/debug/files")
 def debug_files():
+    from pathlib import Path
+    data_dir = BASE / "model_data"
     try:
-        from pathlib import Path
-        entries = [p.name for p in sorted((BASE / "model_data").glob("*"))]
-        return jsonify({"base": str(BASE), "model_data_exists": (BASE / "model_data").exists(), "model_data_files": entries})
+        entries = [p.name for p in sorted(data_dir.glob("*"))]
+        return jsonify({
+            "base": str(BASE),
+            "model_data_exists": data_dir.exists(),
+            "model_data_files": entries
+        })
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        import traceback
+        return jsonify({"error": str(e), "trace": traceback.format_exc()}), 500
+
 
 
 if __name__ == '__main__':
@@ -434,6 +441,7 @@ if __name__ == '__main__':
     else:
 
         logger.error("Failed to initialize recommendation systems. Exiting.")
+
 
 
 
