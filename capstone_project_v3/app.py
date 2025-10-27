@@ -285,7 +285,12 @@ def initialize_systems():
         return False
 
 # --- Heroku/Gunicorn: initialize on import ---
-initialize_systems()
+try:
+    initialize_systems()
+    logger.info("startup: initialize_systems() called at import time")
+except Exception as _e:
+    logger.exception("startup: initialize_systems() raised an exception")
+
 
 @app.route('/')
 def index():
@@ -382,6 +387,12 @@ def health_check():
     except Exception as e:
         return jsonify({'status': 'unhealthy', 'error': str(e)}), 500
 
+@app.route("/api/ready")
+def api_ready():
+    ok = (rec_system is not None) and (sentiment_rec_system is not None)
+    return jsonify({"ready": ok}), (200 if ok else 500)
+
+
 if __name__ == '__main__':
     # Initialize systems before starting the app
     if initialize_systems():
@@ -390,6 +401,7 @@ if __name__ == '__main__':
     else:
 
         logger.error("Failed to initialize recommendation systems. Exiting.")
+
 
 
 
