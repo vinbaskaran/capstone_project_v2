@@ -90,7 +90,7 @@ class ProductRecommendationSystem:
         except Exception as e:
             # Log full traceback so you can see the exact reason in Heroku logs
             logger.error("❌ Error loading models/data: %s\n%s", str(e), traceback.format_exc())
-            return False
+            raise
 
     
     def get_user_recommendations(self, username, n_recommendations=20):
@@ -274,27 +274,16 @@ rec_system = None
 sentiment_rec_system = None
 
 def initialize_systems():
-    """Initialize the recommendation systems"""
+    """Initialize the recommendation systems (raise on failure)."""
     global rec_system, sentiment_rec_system
-    
-    try:
-        # Initialize recommendation system
-        rec_system = ProductRecommendationSystem()
-        
-        # Load models and data
-        if not rec_system.load_models_and_data():
-            logger.error("Failed to load models and data")
-            return False
-        
-        # Initialize sentiment system
-        sentiment_rec_system = SentimentBasedRecommendationSystem(rec_system, rec_system.reviews_df)
-        
-        logger.info("Recommendation systems initialized successfully")
-        return True
-        
-    except Exception as e:
-        logger.error(f"Error initializing systems: {str(e)}")
-        return False
+
+    rec_system = ProductRecommendationSystem()
+    rec_system.load_models_and_data()  # will raise if anything is wrong
+
+    sentiment_rec_system = SentimentBasedRecommendationSystem(rec_system, rec_system.reviews_df)
+    logger.info("Recommendation systems initialized successfully")
+    return True
+
 
 # --- Heroku/Gunicorn: initialize on import ---
 try:
@@ -427,6 +416,14 @@ def api_ready():
     ok = (rec_system is not None) and (sentiment_rec_system is not None)
     return jsonify({"ready": ok}), (200 if ok else 500)
     
+@app.route("/debug/files")
+def debug_files():
+    try:
+        from pathlib import Path
+        entries = [p.name for p in sorted((BASE / "model_data").glob("*"))]
+        return jsonify({"base": str(BASE), "model_data_exists": (BASE / "model_data").exists(), "model_data_files": entries})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 if __name__ == '__main__':
@@ -437,6 +434,7 @@ if __name__ == '__main__':
     else:
 
         logger.error("Failed to initialize recommendation systems. Exiting.")
+
 
 
 
