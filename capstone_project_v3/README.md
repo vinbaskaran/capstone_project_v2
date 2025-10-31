@@ -1,29 +1,29 @@
-# 🎓 Capstone Project: Sentiment-Enhanced Recommendation System
+# Capstone Project: Sentiment-Enhanced Recommendation System
 
 **Author:** Vineeth Baskaran  
-**Program:** Data Science & Machine Learning  
+**Program:** Executive Post Graduate Program in Artificial Intelligence & Machine Learning  
 **Institution:** UpGrad  
 **Submission Date:** October 2025
 
-## 🌐 **LIVE DEPLOYMENT**
-### **🔗 [https://vineeth-capstone-2025-3f32af690cb9.herokuapp.com/](https://vineeth-capstone-2025-3f32af690cb9.herokuapp.com/)**
+##  **LIVE DEPLOYMENT**
+### ** [https://vineeth-capstone-2025-3f32af690cb9.herokuapp.com/](https://vineeth-capstone-2025-3f32af690cb9.herokuapp.com/)**
 
 ---
 
-## 🚀 Project Overview
+##  Project Overview
 This capstone project implements a **hybrid recommendation system** that combines collaborative filtering with advanced sentiment analysis to deliver personalized product recommendations. The system processes **2,571 reviews** across **603 users** and **97 products**, achieving **94.20% accuracy** in sentiment classification and **1.0729 RMSE** in collaborative filtering.
 
-## 🎯 Key Achievements
-- ✅ **Hybrid ML System**: Combines item-based collaborative filtering with sentiment analysis
-- ✅ **High Performance**: 94.20% sentiment accuracy, 1.0729 RMSE for recommendations  
-- ✅ **Production Deployment**: Live Flask web application on Heroku
-- ✅ **Modern UI/UX**: Professional Bootstrap interface with real-time recommendations
-- ✅ **Complete Pipeline**: End-to-end from data processing to deployment
-- ✅ **Academic Excellence**: All capstone submission requirements met
+##  Key Achievements
+-  **Hybrid ML System**: Combines item-based collaborative filtering with sentiment analysis
+-  **High Performance**: 94.20% sentiment accuracy, 1.0729 RMSE for recommendations  
+-  **Production Deployment**: Live Flask web application on Heroku
+-  **Modern UI/UX**: Professional Bootstrap interface with real-time recommendations
+-  **Complete Pipeline**: End-to-end from data processing to deployment
+-  **Academic Excellence**: All capstone submission requirements met
 
-## 📁 Capstone Submission Files
+##  Capstone Submission Files
 
-### 1. **Academic Requirements** ✅
+### 1. **Academic Requirements** 
 - **`Recommendation_engine_project.ipynb`** - Complete end-to-end Jupyter notebook with deployment link
 - **`model.py`** - Best ML model & recommendation system for deployment
 - **`app.py`** - Flask backend connecting ML models to frontend
@@ -47,7 +47,7 @@ This capstone project implements a **hybrid recommendation system** that combine
 - **`reviews_data.csv`** - Complete dataset with sentiment labels (2,571 records)
 - **`sample_users.pkl`** - Sample users for UI testing
 
-## 🌟 System Features
+##  System Features
 
 ### 1. **Sentiment-Enhanced Recommendations**
 - **Hybrid Algorithm**: Combines collaborative filtering with sentiment analysis
@@ -75,7 +75,7 @@ Each recommendation includes:
 - **Total Review Count** (number of reviews analyzed)
 - **Original CF Rank** (position in collaborative filtering results)
 
-## 📊 Technical Specifications
+##  Technical Specifications
 
 ### **Machine Learning Pipeline**
 - **Sentiment Analysis**: Random Forest classifier with TF-IDF features
@@ -96,7 +96,7 @@ Each recommendation includes:
 - **Response Time**: <500ms per recommendation request
 - **System Uptime**: 99.9% availability on Heroku
 
-## 🔧 API Endpoints
+##  API Endpoints
 
 ### **Web Interface**
 - `GET /` - Main web interface with user input form
@@ -107,7 +107,7 @@ Each recommendation includes:
 - `GET /health` - System health check and status information
 - `GET /api/ready` - Deployment readiness verification
 
-## 🎯 Recommendation Algorithm
+##  Recommendation Algorithm
 
 ### **Step-by-Step Process:**
 1. **User Input**: Enter username (603 available users)
@@ -123,7 +123,7 @@ Sentiment Score = (Positive Review Percentage × 0.7) + (Average Rating × 20 ×
 ```
 This formula ensures products with both high ratings AND positive sentiment are prioritized.
 
-## 🔍 How to Test the System
+##  How to Test the System
 
 ### **Live Application Testing:**
 1. Visit: https://vineeth-capstone-2025-3f32af690cb9.herokuapp.com/
@@ -140,15 +140,15 @@ curl https://vineeth-capstone-2025-3f32af690cb9.herokuapp.com/api/recommend/rebe
 curl https://vineeth-capstone-2025-3f32af690cb9.herokuapp.com/health
 ```
 
-## 🏆 Academic Impact
+##  Academic Impact
 
 ### **Learning Objectives Achieved:**
-- ✅ **End-to-End ML Pipeline**: Complete data science workflow from EDA to deployment
-- ✅ **Advanced Algorithms**: Implementation of multiple ML techniques
-- ✅ **Hybrid Systems**: Successful combination of different recommendation approaches
-- ✅ **Production Deployment**: Real-world application with cloud infrastructure
-- ✅ **Performance Optimization**: Achieving production-grade response times
-- ✅ **Professional Development**: Full-stack development with modern technologies
+-  **End-to-End ML Pipeline**: Complete data science workflow from EDA to deployment
+-  **Advanced Algorithms**: Implementation of multiple ML techniques
+-  **Hybrid Systems**: Successful combination of different recommendation approaches
+-  **Production Deployment**: Real-world application with cloud infrastructure
+-  **Performance Optimization**: Achieving production-grade response times
+-  **Professional Development**: Full-stack development with modern technologies
 
 ### **Technical Skills Demonstrated:**
 - **Data Science**: EDA, feature engineering, model evaluation, performance tuning
@@ -158,7 +158,7 @@ curl https://vineeth-capstone-2025-3f32af690cb9.herokuapp.com/health
 - **DevOps & Deployment**: Cloud deployment, monitoring, production optimization
 - **Project Management**: Complete project lifecycle from conception to deployment
 
-## 🛠️ Local Development Setup
+##  Local Development Setup
 
 ### **Prerequisites:**
 ```bash
@@ -185,7 +185,7 @@ python app.py
 - All models pre-trained and ready to use
 - Sample users available for immediate testing
 
-## 🚀 Deployment Architecture
+##  Deployment Architecture
 
 ### **Heroku Configuration:**
 - **Runtime**: Python 3.11 (specified in `runtime.txt`)
@@ -199,10 +199,10 @@ python app.py
 - **Security**: Input validation and secure data handling
 - **Scalability**: Cloud-native architecture for high availability
 
-## 📞 Project Information
+##  Project Information
 
 ### **Submission Details:**
-- **Course**: Data Science & Machine Learning Program
+- **Course**: Executive Post Graduate Program in Artificial Intelligence & Machine Learning 
 - **Student**: Vineeth Baskaran
 - **Institution**: UpGrad
 - **Submission Date**: October 2025
@@ -215,8 +215,5 @@ python app.py
 
 ---
 
-## ✨ **Project Status: COMPLETE & DEPLOYED** ✨
 
-This capstone project represents a comprehensive implementation of modern machine learning techniques applied to real-world recommendation challenges, successfully deployed as a production-ready web application. All academic requirements have been fulfilled, and the system is ready for evaluation.
 
-**🎓 Ready for Capstone Project Submission and Evaluation**
